@@ -61,7 +61,7 @@ def get_user_token():
 @provide_client
 def test_token():
     try:
-        b = Board(client, user.board_id)
+        b = Board(client, user.board_id).getCards()
         return True
     except trolly.ResourceUnavailable:
         sys.stderr.write('bad board id\n')
@@ -72,10 +72,13 @@ def test_token():
 
 @provide_client
 def set_board():
+    old_id = user.board_id
     board_id = raw_input("paste in id of board: ").strip()
-    b = Board(client, board_id)
     user.board_id = board_id
-    return True
+    valid = test_token()
+    if not valid:
+        user.board_id = old_id
+    return valid
 
 @provide_client
 #TODO need sensible way to figure out when we need to do a refresh
