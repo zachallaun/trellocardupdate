@@ -42,17 +42,9 @@ def init_client(new_token=False):
     Initializes the client use for all Trello requests as a module-level variable
     """
     global client
-    while True:
-        if new_token:
-            token = generate_token()
-            user.token = token
-            client = Client(APP_KEY, token)
-            return
-        token = user.token
-        if token:
-            client = Client(APP_KEY, token)
-            return
-        token = generate_token()
+    if new_token or not user.token:
+        user.token = generate_token()
+    client = Client(APP_KEY, user.token)
 
 @provide_client
 def get_user_token():
